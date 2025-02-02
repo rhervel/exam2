@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Minijuego Tecno-Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-image: url(https://mir-s3-cdn-cf.behance.net/project_modules/fs/e6401575612125.5c518944bb203.gif);
+            background-size: cover;
+            color: #0ff;
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+        }
+        .game-container {
+            background: #111;
+            border: 3px solid #ffcc00;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px #ffcc00;
+            display: inline-block;
+            margin-top: 30px;
+        }
+        .question {
+            font-size: 18px;
+            color: #ffcc00;
+            margin-bottom: 20px;
+        }
+        .option {
+            display: block;
+            background: #ff7700;
+            border: none;
+            color: white;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+            box-shadow: 0px 5px 0px #770000;
+        }
+        .option:hover {
+            background: #ff0000;
+            box-shadow: 0px 2px 0px #770000;
+            transform: translateY(3px);
+        }
+        .score {
+            font-size: 20px;
+            color: #00ff00;
+            margin-top: 15px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎮 Minijuego Tecno-Quiz</h1>
+    <div class="game-container" id="gameBox">
+        <p id="question" class="question"></p>
+        <div id="options"></div>
+        <p id="score" class="score"></p>
+        <div id="saveScoreForm" class="hidden">
+            <h2>🏆 ¡Fin del juego!</h2>
+            <p>Ingresa tu nombre y apellidos para enviar tu puntuación:</p>
+            <input type="text" id="playerName" placeholder="Tu nombre">
+            <button onclick="guardarPuntuacion()">Enviar Puntuación</button>
+        </div>
+    </div>
+
+    <audio id="correctSound" src="the-correct-answer-33-183620.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="wrong-buzzer-6268.mp3" preload="auto"></audio>
+
+
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+
+    <script>
+        // Inicialización de EmailJS
+        emailjs.init("Kp5GMcHPz_W9T1EWF"); // Sustituye 'tu_user_id' con tu User ID de EmailJS
+
+        const preguntas = [
+    { pregunta: "¿Qué herramienta se utiliza para cortar chapas finas?", opciones: ["Cizalla", "Sierra de arco", "Tijeras de chapa", "Radial"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué tipo de cortes puede realizar una cizalla?", opciones: ["Cortes curvos", "Cortes en madera", "Cortes complejos y curvos en chapas finas", "Cortes de piezas metálicas gruesas"], correcta: 3, puntos: 10 },
+    { pregunta: "¿Qué tipo de piezas se sujetan con alicates?", opciones: ["Piezas grandes", "Piezas pequeñas", "Piezas de madera", "Piezas de metal grueso"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué hace un gránete en el proceso de taladrado?", opciones: ["Marca el lugar del agujero", "Hace el agujero", "Sujeta la pieza", "Lubrica la pieza"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Cómo se afilan las brocas?", opciones: ["Con una lima", "Con una esmeriladora", "Con una taladradora", "Con una máquina afiladora"], correcta: 3, puntos: 10 },
+    { pregunta: "¿Qué tipo de lima se utiliza para afinar?", opciones: ["Lima de grano grueso", "Lima de grano fino", "Lima de grano medio", "Lima de grano muy grueso"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué es una esmeriladora?", opciones: ["Una máquina de soldar", "Una máquina para afilar herramientas", "Una herramienta de corte", "Una herramienta para taladrar"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué tipo de trabajo se realiza en la forja?", opciones: ["Tallado de madera", "Trabajos de metales", "Corte de piezas de madera", "Soldadura de piezas metálicas"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué hace la fresadora?", opciones: ["Realiza cortes rectos", "Usa una herramienta de corte llamada fresa", "Realiza taladros grandes", "Realiza soldaduras"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué se emplea para enfriar las piezas en el proceso de fresado?", opciones: ["Agua", "Taladrina", "Aceite", "Frío directo"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué proceso utiliza una máquina llamada 'torno'?", opciones: ["Cortar metales", "Taladrar metales", "Girar piezas a gran velocidad", "Soldar piezas"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué hace el proceso de laminado?", opciones: ["Aumenta el grosor de una pieza de metal", "Disminuye el grosor de una pieza de metal", "Cambia la forma de una pieza de metal", "Estira un alambre"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué tipo de proceso es el estampado?", opciones: ["Estirar alambre", "Cortar piezas de metal", "Presionar una chapa entre dos moldes", "Soldar piezas"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué se obtiene mediante el troquelado?", opciones: ["Ranuras", "Piezas de metal muy gruesas", "Cortes de metal con la forma de la cuchilla", "Piezas rectangulares"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué caracteriza a las uniones remachadas?", opciones: ["Se utilizan tornillos", "Son permanentes", "Son desmontables", "Utilizan soldadura"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué es la soldadura blanda?", opciones: ["Soldadura con fusión de metales", "Soldadura sin fusión de los metales", "Soldadura realizada con gas", "Soldadura fuerte"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué se utiliza en la soldadura oxiacetilénica?", opciones: ["Oxígeno y gas propano", "Gas y oxígeno", "Acetileno y oxígeno", "Gas natural"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué es un perno?", opciones: ["Un tornillo con rosca", "Un tornillo con tuerca", "Un remache", "Un tipo de soldadura"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué función tiene un tornillo autorroscante?", opciones: ["Crear una rosca mientras se introduce", "Crear agujeros", "Sujeta piezas grandes", "Se utiliza en soldadura"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Qué herramienta se utiliza para afilar brocas?", opciones: ["Esmeriladora", "Lima", "Taladradora", "Cizalla"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Cómo se realiza el proceso de fresado?", opciones: ["Con una máquina llamada 'fresadora'", "Con un torno", "Con una radial", "Con una esmeriladora"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Qué herramienta se utiliza para sujetar piezas pequeñas y alambres?", opciones: ["Alicates", "Cizalla", "Taladradora", "Sierra de arco"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Dónde se encuentran la mayoría de los metales en estado natural?", opciones: ["En minerales", "En rocas", "En líquidos", "En plantas"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Cuántos metales eran conocidos en la Antigüedad?", opciones: ["Cinco", "Seis", "Siete", "Nueve"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué combinación forma el bronce?", opciones: ["Hierro y cobre", "Cinc y plomo", "Cobre y estaño", "Oro y plata"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué característica tiene el bronce al contacto con el aire?", opciones: ["Forma una pátina azulada o verdosa", "Se oxida rápidamente", "Se vuelve negro", "No cambia su apariencia"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Qué metales forman el latón?", opciones: ["Hierro y níquel", "Cobre y cinc", "Cobre y estaño", "Cromo y molibdeno"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué aleación resiste la corrosión debido a su contenido de cromo?", opciones: ["Latón", "Bronce", "Acero inoxidable", "Fundición"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Cuál de las siguientes es una propiedad física general de los metales?", opciones: ["Baja densidad", "Alta densidad", "No reflejan la luz", "No conducen electricidad"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué proceso sigue a la extracción de minerales para obtener metal útil?", opciones: ["Refinamiento", "Separación de mena y ganga", "Aleación", "Compactación"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué función tiene el combustible en el alto horno?", opciones: ["Generar altas temperaturas", "Reducir impurezas", "Mezclar el mineral", "Actuar como catalizador"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Qué metal tiene una gran elasticidad al ser mezclado con acero?", opciones: ["Cromo", "Silicio", "Níquel", "Vanadio"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué nombre recibe el hierro con menos del 0.1% de carbono?", opciones: ["Acero inoxidable", "Hierro puro", "Fundición", "Hierro forjado"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué elemento da al acero inoxidable su resistencia a la corrosión?", opciones: ["Tungsteno", "Molibdeno", "Cromo", "Vanadio"], correcta: 2, puntos: 10 },
+    { pregunta: "¿Qué metal tiene el punto de fusión más alto según la tabla?", opciones: ["Cromo", "Titanio", "Níquel", "Vanadio"], correcta: 0, puntos: 10 },
+    { pregunta: "¿Qué metales forman la aleación del bronce?", opciones: ["Cobre y cinc", "Cobre y estaño", "Cobre y níquel", "Cobre y aluminio"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué propiedad destaca del cuproníquel?", opciones: ["Alta dureza", "Resistencia al agua de mar", "Alta ductilidad", "Resistencia al calor"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Qué aleación incluye aluminio y cobre?", opciones: ["Cuproníquel", "Duraluminio", "Cuproaluminio", "Bronce"], correcta: 1, puntos: 10 },
+    { pregunta: "¿Cuál es el uso del cromo mencionado en la tabla?", opciones: ["Monedas", "Tornillería", "Conductores eléctricos", "Procesos de cromado y pinturas"], correcta: 3, puntos: 10 },
+    { pregunta: "¿Qué propiedad tiene el duraluminio?", opciones: ["Alta resistencia mecánica y dureza", "Resistencia a la corrosión", "Sonoridad excelente", "Maleabilidad en agua salada"], correcta: 0, puntos: 10 }
+];
+
+
+
+        let indicePregunta = 0;
+        let puntuacionTotal = 0;
+
+        function cargarPregunta() {
+            if (indicePregunta < preguntas.length) {
+                mostrarPreguntaOpcionMultiple(preguntas[indicePregunta]);
+            } else {
+                mostrarFormulario();
+            }
+        }
+
+        function mostrarPreguntaOpcionMultiple(pregunta) {
+            document.getElementById("question").textContent = pregunta.pregunta;
+            let opcionesHtml = "";
+            pregunta.opciones.forEach((opcion, i) => {
+                opcionesHtml += `<button class="option" onclick="verificarRespuesta(${i})">${opcion}</button>`;
+            });
+            document.getElementById("options").innerHTML = opcionesHtml;
+            document.getElementById("score").textContent = `Puntuación: ${puntuacionTotal}`;
+        }
+
+        function verificarRespuesta(indiceSeleccionado) {
+            let preguntaActual = preguntas[indicePregunta];
+            if (indiceSeleccionado === preguntaActual.correcta) {
+                puntuacionTotal += preguntaActual.puntos;
+                document.getElementById("correctSound").play();
+            } else {
+                document.getElementById("wrongSound").play();
+            }
+            indicePregunta++;
+            cargarPregunta();
+        }
+
+        function mostrarFormulario() {
+            document.getElementById("question").textContent = "¡Juego terminado!";
+            document.getElementById("options").innerHTML = "";
+            document.getElementById("score").textContent = `Puntuación final: ${puntuacionTotal}`;
+            document.getElementById("saveScoreForm").classList.remove("hidden");
+        }
+
+        function guardarPuntuacion() {
+            let nombre = document.getElementById("playerName").value.trim();
+            if (nombre === "") return;
+
+    // Crear el objeto con los datos correctos
+            let puntuacionData = {
+                nombre: nombre,
+                puntuacion: puntuacionTotal
+            };
+
+    // Asegúrate de que los datos sean los correctos
+    console.log(puntuacionData); // Esto es para depurar, si ves que la estructura es correcta, puedes eliminar esta línea.
+
+    // Enviar correo con la puntuación
+    emailjs.send("service_k3hdxdl", "template_3iaqcfo", puntuacionData)
+    .then(function(response) {
+        alert("¡Puntuación enviada correctamente!");
+            console.log(response); // Puedes revisar la respuesta de la API aquí
+        }, function(error) {
+            console.log(error); // Aquí veremos el error real
+            alert("Error al enviar la puntuación: " + error.text);
+        });
+}
+
+cargarPregunta();
+</script>
+<script type="text/javascript"
+src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
+</script>
+<script type="text/javascript">
+ (function(){
+  emailjs.init({
+    publicKey: "Kp5GMcHPz_W9T1EWF",
+});
+})();
+</script>
+
+
+</body>
+</html>

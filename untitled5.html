@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Juego Drag and Drop - Responde para avanzar</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #0ff;
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .title {
+            font-size: 3rem;
+            text-transform: uppercase;
+            color: #ffcc00;
+            animation: flicker 1.5s infinite;
+        }
+        .draggable {
+            background: #ff7700;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: white;
+            box-shadow: 0px 5px 0px #770000;
+        }
+        .droppable {
+            background: #222;
+            border: 2px dashed #ff7700;
+            padding: 20px;
+            margin: 20px;
+            min-height: 50px;
+            color: #ffcc00;
+            font-size: 1.2rem;
+            border-radius: 10px;
+        }
+        .correct {
+            background-color: #00ff00;
+        }
+        .incorrect {
+            background-color: #ff0000;
+        }
+        .score {
+            font-size: 1.5rem;
+            color: #00ff00;
+            margin-top: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        .next-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00ff00;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        .next-button:hover {
+            background-color: #ffcc00;
+        }
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1 class="title">🎮 Ordena los Términos</h1>
+        <p class="lead">Arrastra los términos a sus definiciones correctas.</p>
+        
+        <!-- Pantalla 1 -->
+        <div id="screen1" class="game-screen">
+            <h3>Pregunta 1</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="term1" class="draggable" draggable="true" ondragstart="drag(event)">HTML</div>
+                    <div id="term2" class="draggable" draggable="true" ondragstart="drag(event)">CSS</div>
+                </div>
+                <div class="col-md-6">
+                    <div id="drop1" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Lenguaje utilizado para estructurar páginas web.</div>
+                    <div id="drop2" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Estilo visual de las páginas web.</div>
+                </div>
+            </div>
+            <button id="next1" class="next-button hidden" onclick="nextScreen(2)">Siguiente</button>
+        </div>
+
+        <!-- Pantalla 2 -->
+        <div id="screen2" class="game-screen hidden">
+            <h3>Pregunta 2</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="term3" class="draggable" draggable="true" ondragstart="drag(event)">JavaScript</div>
+                    <div id="term4" class="draggable" draggable="true" ondragstart="drag(event)">API</div>
+                </div>
+                <div class="col-md-6">
+                    <div id="drop3" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Lenguaje de programación que permite interacción en la web.</div>
+                    <div id="drop4" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Interfaz para interactuar con otras aplicaciones.</div>
+                </div>
+            </div>
+            <button id="next2" class="next-button hidden" onclick="nextScreen(3)">Siguiente</button>
+        </div>
+
+        <!-- Pantalla 3 -->
+        <div id="screen3" class="game-screen hidden">
+            <h3>Pregunta 3</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="term5" class="draggable" draggable="true" ondragstart="drag(event)">Framework</div>
+                    <div id="term6" class="draggable" draggable="true" ondragstart="drag(event)">Frontend</div>
+                </div>
+                <div class="col-md-6">
+                    <div id="drop5" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Conjunto de herramientas y bibliotecas para desarrollar software.</div>
+                    <div id="drop6" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Parte de un sitio web con la que interactúa el usuario.</div>
+                </div>
+            </div>
+            <button id="next3" class="next-button hidden" onclick="nextScreen(4)">Siguiente</button>
+        </div>
+
+        <!-- Pantalla 4 -->
+        <div id="screen4" class="game-screen hidden">
+            <h3>Pregunta 4</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="term7" class="draggable" draggable="true" ondragstart="drag(event)">Backend</div>
+                    <div id="term8" class="draggable" draggable="true" ondragstart="drag(event)">API REST</div>
+                </div>
+                <div class="col-md-6">
+                    <div id="drop7" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Parte del sitio web que maneja la lógica y base de datos.</div>
+                    <div id="drop8" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Interfaz para interactuar con otras aplicaciones de forma sencilla.</div>
+                </div>
+            </div>
+            <button id="next4" class="next-button hidden" onclick="nextScreen(5)">Siguiente</button>
+        </div>
+
+        <!-- Pantalla 5 -->
+        <div id="screen5" class="game-screen hidden">
+            <h3>Pregunta 5</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="term9" class="draggable" draggable="true" ondragstart="drag(event)">Algoritmo</div>
+                    <div id="term10" class="draggable" draggable="true" ondragstart="drag(event)">Bug</div>
+                </div>
+                <div class="col-md-6">
+                    <div id="drop9" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Conjunto de instrucciones para resolver un problema.</div>
+                    <div id="drop10" class="droppable" ondrop="drop(event)" ondragover="allowDrop(event)">Error en el código que provoca un comportamiento inesperado.</div>
+                </div>
+            </div>
+            <button id="finish" class="next-button" onclick="showForm()">Finalizar</button>
+        </div>
+
+        <!-- Formulario de nombre al finalizar -->
+        <div id="formScreen" class="hidden">
+            <h3>¡Has terminado el juego!</h3>
+            <p>Introduce tu nombre para ver la puntuación final.</p>
+            <form id="nameForm">
+                <input type="text" id="playerName" class="form-control" placeholder="Introduce tu nombre" required>
+                <button type="submit" class="next-button mt-3">Enviar puntuación</button>
+            </form>
+            <div id="thankYou" class="hidden"></div>
+        </div>
+
+        <div id="finalScore" class="score hidden"></div>
+    </div>
+
+    <!-- EmailJS API -->
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script>
+        emailjs.init('tu_user_id'); // Aquí tu User ID de EmailJS
+
+        let currentScreen = 1;
+        let score = 0;
+
+        const correctAnswers = {
+            'term1': 'drop1', // HTML
+            'term2': 'drop2', // CSS
+            'term3': 'drop3', // JavaScript
+            'term4': 'drop4', // API
+            'term5': 'drop5', // Framework
+            'term6': 'drop6', // Frontend
+            'term7': 'drop7', // Backend
+            'term8': 'drop8', // API REST
+            'term9': 'drop9', // Algoritmo
+            'term10': 'drop10' // Bug
+        };
+
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            event.dataTransfer.setData("text", event.target.id);
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            let data = event.dataTransfer.getData("text");
+            let draggedElement = document.getElementById(data);
+            let dropTarget = event.target;
+
+            // Colocar el término en cualquier casilla
+            dropTarget.appendChild(draggedElement);
+            draggedElement.setAttribute("draggable", "false");
+            draggedElement.classList.add("dragged");
+
+            // Evaluamos si es correcto
+            if (dropTarget.id === correctAnswers[data]) {
+                dropTarget.classList.add("correct");
+                score++; // Incrementamos la puntuación por respuesta correcta
+            } else {
+                dropTarget.classList.add("incorrect");
+            }
+            checkCompletion();
+        }
+
+        function checkCompletion() {
+            const currentNextButton = document.getElementById(`next${currentScreen}`);
+            let answered = document.querySelectorAll(`#screen${currentScreen} .dragged`).length;
+            if (answered === 2) { // Cambié la condición para que pase con 2 respuestas correctas
+                currentNextButton.classList.remove("hidden");
+            }
+        }
+
+        function nextScreen(next) {
+            document.getElementById(`screen${currentScreen}`).classList.add("hidden");
+            currentScreen = next;
+            document.getElementById(`screen${currentScreen}`).classList.remove("hidden");
+        }
+
+        function showForm() {
+            // Mostrar la puntuación final
+            document.getElementById('finalScore').innerText = `¡Juego finalizado! Tu puntuación es: ${score}`;
+            document.getElementById('finalScore').classList.remove("hidden");
+            document.getElementById('screen5').classList.add("hidden");
+            document.getElementById('formScreen').classList.remove("hidden");
+        }
+
+        document.getElementById('nameForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const playerName = document.getElementById('playerName').value;
+
+            // Enviar la puntuación por email
+            const data = {
+                player_name: playerName,
+                score: score,
+            };
+
+            emailjs.send('tu_service_id', 'tu_template_id', data)
+                .then((response) => {
+                    console.log('Éxito al enviar el correo:', response);
+                    document.getElementById('thankYou').classList.remove('hidden');
+                    document.getElementById('thankYou').innerText = "¡Gracias por jugar! Tu puntuación ha sido enviada.";
+                }, (error) => {
+                    console.log('Error al enviar el correo:', error);
+                    document.getElementById('thankYou').classList.remove('hidden');
+                    document.getElementById('thankYou').innerText = "Hubo un error al enviar la puntuación. Intenta nuevamente.";
+                });
+        });
+    </script>
+
+</body>
+</html>
