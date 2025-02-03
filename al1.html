@@ -62,24 +62,25 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
-            .question {
+        .question {
             color: #ffcc00;
             text-shadow: 3px 3px 5px black;
         }
-                .btn{
+        .btn{
             background-color: white;
         }
-                .footer{
-           position: fixed;
-           left: 0;
-           bottom: 0;
-           width: 100%;
+        .footer{
+            padding-top: 50px;
+            /*position: fixed;*/
+            left: 0;
+            bottom: 0;
+            width: 100%;
 
 
-           text-align: center;
-       }
+            text-align: center;
+        }
 
-               .music-button {
+        .music-button {
             position: fixed;
             bottom: 20px;
             right: 20px;
@@ -175,26 +176,26 @@
     <button class="answer-button" onclick="checkAnswer(10)">Finalizar</button>
 </div>
 
-        <!-- Puntuación -->
-        <div id="scoreDiv" class="score hidden"></div>
+<!-- Puntuación -->
+<div id="scoreDiv" class="score hidden"></div>
 
-        <!-- Formulario para nombre y puntuación -->
-        <div id="finalForm" class="hidden">
-            <h3>¡Has terminado el juego!</h3>
-            <p>Introduce tu nombre para ver la puntuación final.</p>
-            <input type="text" id="playerName" class="form-control" placeholder="Introduce tu nombre" required>
-            <button class="answer-button mt-3" onclick="sendScore()">Enviar puntuación</button>
-            <a href="index.html" class="btn">Volver</a>
-            <div id="thankYou" class="hidden"></div>
-        </div>
-    </div>
+<!-- Formulario para nombre y puntuación -->
+<div id="finalForm" class="hidden">
+    <h3>¡Has terminado el juego!</h3>
+    <p>Introduce tu nombre para ver la puntuación final.</p>
+    <input type="text" id="playerName" class="form-control" placeholder="Introduce tu nombre" required>
+    <button class="answer-button mt-3" onclick="sendScore()">Enviar puntuación</button>
+    <a href="index.html" class="btn">Volver</a>
+    <div id="thankYou" class="hidden"></div>
+</div>
+</div>
 
-    <!-- EmailJS API -->
-    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-    <script>
+<!-- EmailJS API -->
+<script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script>
         emailjs.init('Kp5GMcHPz_W9T1EWF'); // Reemplaza con tu User ID de EmailJS
 
-const correctAnswers = [
+        const correctAnswers = [
     "Metales", // Pregunta 1
     "Minerales", // Pregunta 2
     "Aleación", // Pregunta 3
@@ -207,82 +208,82 @@ const correctAnswers = [
     "Plegabilidad", // Pregunta 10
 ];
 
-        let score = 0;
-        let currentQuestion = 1;
+let score = 0;
+let currentQuestion = 1;
 
-        function checkAnswer(questionNumber) {
-            const userAnswer = document.getElementById(`answer${questionNumber}`).value.trim().toLowerCase();
-            const correctAnswer = correctAnswers[questionNumber - 1].toLowerCase();
+function checkAnswer(questionNumber) {
+    const userAnswer = document.getElementById(`answer${questionNumber}`).value.trim().toLowerCase();
+    const correctAnswer = correctAnswers[questionNumber - 1].toLowerCase();
 
-            if (userAnswer === correctAnswer) {
-                score++;
-            }
+    if (userAnswer === correctAnswer) {
+        score++;
+    }
 
-            if (currentQuestion < 10) {
-                document.getElementById(`question${currentQuestion}`).classList.add("hidden");
-                currentQuestion++;
-                document.getElementById(`question${currentQuestion}`).classList.remove("hidden");
+    if (currentQuestion < 10) {
+        document.getElementById(`question${currentQuestion}`).classList.add("hidden");
+        currentQuestion++;
+        document.getElementById(`question${currentQuestion}`).classList.remove("hidden");
+    } else {
+        document.getElementById(`question${currentQuestion}`).classList.add("hidden");
+        document.getElementById('scoreDiv').innerHTML = `¡Juego finalizado! Tu puntuación es: ${score}/10`;
+        document.getElementById('scoreDiv').classList.remove("hidden");
+        document.getElementById('finalForm').classList.remove("hidden");
+    }
+}
+
+function sendScore() {
+    const playerName = document.getElementById('playerName').value;
+    const data = {
+        player_name: playerName,
+        score: score,
+    };
+
+    emailjs.send('service_k3hdxdl', 'template_7fwivoi', data)
+    .then((response) => {
+        console.log('Puntuación enviada:', response);
+        document.getElementById('thankYou').classList.remove('hidden');
+        document.getElementById('thankYou').innerText = "¡Gracias por jugar! Tu puntuación ha sido enviada.";
+    }, (error) => {
+        console.log('Error al enviar la puntuación:', error);
+        document.getElementById('thankYou').classList.remove('hidden');
+        document.getElementById('thankYou').innerText = "Hubo un error al enviar la puntuación. Intenta nuevamente.";
+    });
+}
+</script>
+
+<!-- Botón de Música -->
+<button class="music-button" onclick="toggleMusic()">🎵 Música: OFF</button>
+
+<!-- Audio -->
+<audio id="bg-music" loop>
+    <source src="byte-blast-8-bit-arcade-music-background-music-for-video-208780.mp3" type="audio/mp3">
+        Tu navegador no soporta el audio.
+    </audio>
+
+    <script>
+
+        // Música de fondo
+        let music = document.getElementById("bg-music");
+        let musicButton = document.querySelector(".music-button");
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                music.pause();
+                musicButton.innerText = "🎵 Música: OFF";
             } else {
-                document.getElementById(`question${currentQuestion}`).classList.add("hidden");
-                document.getElementById('scoreDiv').innerHTML = `¡Juego finalizado! Tu puntuación es: ${score}/10`;
-                document.getElementById('scoreDiv').classList.remove("hidden");
-                document.getElementById('finalForm').classList.remove("hidden");
+                music.play();
+                musicButton.innerText = "🎵 Música: ON";
             }
-        }
-
-        function sendScore() {
-            const playerName = document.getElementById('playerName').value;
-            const data = {
-                player_name: playerName,
-                score: score,
-            };
-
-            emailjs.send('service_k3hdxdl', 'template_7fwivoi', data)
-                .then((response) => {
-                    console.log('Puntuación enviada:', response);
-                    document.getElementById('thankYou').classList.remove('hidden');
-                    document.getElementById('thankYou').innerText = "¡Gracias por jugar! Tu puntuación ha sido enviada.";
-                }, (error) => {
-                    console.log('Error al enviar la puntuación:', error);
-                    document.getElementById('thankYou').classList.remove('hidden');
-                    document.getElementById('thankYou').innerText = "Hubo un error al enviar la puntuación. Intenta nuevamente.";
-                });
+            musicPlaying = !musicPlaying;
         }
     </script>
 
-    <!-- Botón de Música -->
-    <button class="music-button" onclick="toggleMusic()">🎵 Música: OFF</button>
-
-    <!-- Audio -->
-    <audio id="bg-music" loop>
-        <source src="byte-blast-8-bit-arcade-music-background-music-for-video-208780.mp3" type="audio/mp3">
-            Tu navegador no soporta el audio.
-        </audio>
-
-            <script>
-
-        // Música de fondo
-            let music = document.getElementById("bg-music");
-            let musicButton = document.querySelector(".music-button");
-            let musicPlaying = false;
-
-            function toggleMusic() {
-                if (musicPlaying) {
-                    music.pause();
-                    musicButton.innerText = "🎵 Música: OFF";
-                } else {
-                    music.play();
-                    musicButton.innerText = "🎵 Música: ON";
-                }
-                musicPlaying = !musicPlaying;
-            }
-        </script>
-
     <!-- Footer -->
-<footer class="footer">
-    <p>👾 Tecno Arcade - Segundo y Tercero de la ESO // RHV 2025</p>
+    <footer class="footer">
+        <p>👾 Tecno Arcade - Segundo y Tercero de la ESO // RHV 2025</p>
 
-</footer>
+    </footer>
 
 </body>
 </html>
