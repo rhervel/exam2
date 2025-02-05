@@ -15,8 +15,6 @@
         body {
             font-family: 'Press Start 2P', cursive;
             background-color: #000;
-            background-image: url(https://wallpapersok.com/images/hd/retrowave-gaming-arcade-97unz1oy5qnkgpoa.jpg);
-            background-size: cover;
             color: #ffcc00;
             text-align: center;
             padding: 20px;
@@ -70,14 +68,6 @@
             color: #00ff00;
             animation: winAnimation 1s infinite;
         }
-         .footer{
-            padding-top: 50px;
-            /*position: fixed;*/
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -104,12 +94,6 @@
 
         <p id="winMessage">🎉 YOU WIN! 🎉</p>
     </div>
-
-    <!-- Sonidos -->
-    <audio id="aciertoSound" src="smw_coin.wav"></audio>
-    <audio id="falloSound" src="fail-234710.mp3"></audio>
-    <audio id="victoriaSound" src="smb_stage_clear.wav"></audio>
-    <audio id="gameOverSound" src="smb_gameover.wav"></audio>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -138,7 +122,6 @@
         function iniciarJuego() {
             if (palabraActual >= 10) {
                 document.getElementById("winMessage").style.display = "block";
-                document.getElementById("victoriaSound").play();
                 return;
             }
 
@@ -169,12 +152,10 @@
                 palabra.split("").forEach((char, i) => {
                     if (char === letra) oculta[i] = letra;
                 });
-                document.getElementById("aciertoSound").play();
             } else {
                 if (!letrasErradas.includes(letra)) {
                     letrasErradas.push(letra);
                     intentos--;
-                    document.getElementById("falloSound").play();
                 }
             }
 
@@ -191,21 +172,34 @@
                 vidas--;
                 if (vidas === 0) {
                     document.getElementById("mensaje").textContent = "😞 GAME OVER";
-                    document.getElementById("gameOverSound").play();
-                    setTimeout(() => { cargarJuego(); }, 2000);
+                    setTimeout(() => {
+                        cargarJuego();
+                    }, 2000);
                 } else {
+                    document.getElementById("mensaje").textContent = "Perdiste. La palabra era: " + palabra;
                     iniciarJuego();
                 }
             }
         }
 
+        function dibujarAhorcado(intentos) {
+            const canvas = document.getElementById("canvas");
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            if (intentos < 6) ctx.moveTo(50, 150), ctx.lineTo(150, 150);
+            if (intentos < 5) ctx.moveTo(100, 150), ctx.lineTo(100, 50);
+            if (intentos < 4) ctx.moveTo(100, 50), ctx.lineTo(140, 50);
+            if (intentos < 3) ctx.moveTo(140, 50), ctx.lineTo(140, 70);
+            if (intentos < 2) ctx.arc(140, 80, 10, 0, Math.PI * 2);
+            if (intentos < 1) ctx.moveTo(140, 90), ctx.lineTo(140, 120);
+            ctx.strokeStyle = "#ffcc00";
+            ctx.stroke();
+        }
+
         window.onload = cargarJuego;
     </script>
-
-
-    <footer class="footer">
-        <p>👾 Tecno Arcade - Segundo y Tercero de la ESO // RHV 2025</p>
-    </footer>
 
 </body>
 </html>
